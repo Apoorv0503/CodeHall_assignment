@@ -41,11 +41,19 @@
 
 .book-card {
   text-align: center;
+  border: solid gray 1px;
+  padding: 2px;
+  cursor: pointer;
 }
 
 .book-cover {
   width: 100%;
-  height: auto;
+  height: '150px';
+  object-fit:contain;
+  overflow: hidden;
+  border-radius: 12px; 
+  overflow: hidden; 
+  aspect-ratio: 4 / 3;
 }
 
 .book-title {
@@ -58,3 +66,17 @@
   color: grey;
   cursor: pointer;
 }
+
+/* grid view for the tab */
+/* @media (max-width: 1024px) {
+  .grid-container {
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
+  }
+} */
+
+/* grid view for mobile */
+/* @media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(1, minmax(150px, 1fr)); 
+  }
+} */

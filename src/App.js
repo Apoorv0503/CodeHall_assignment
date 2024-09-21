@@ -42,10 +42,31 @@ function App() {
   }
 };
 
-const handleAuthorClick = (authorKey) => {
-  // Placeholder for modal logic
-  setShowModal(true);
+// const handleAuthorClick = (authorKey) => {
+//   // Placeholder for modal logic
+//   setShowModal(true);
+// };
+
+
+const handleAuthorClick = async (authorKey) => {
+  try {
+    // Make API call for author details 
+    const response = await axios.get(`https://openlibrary.org/authors/${authorKey}.json`);
+    
+    // exatract the data
+    const authorData = {
+      name: response.data.name,
+      bio: response.data.bio?.value || 'No bio available', // Handle cases where bio is missing
+      photo_url: `https://covers.openlibrary.org/b/id/${response.data.photos?.[0]}-M.jpg` || '', // Use photo ID if available
+    };
+
+    setAuthorDetails(authorData);
+    setShowModal(true); // Show the modal
+
+  } catch (error) {
+    console.error("Error fetching author details:", error);
 };
+}
 
 
   return (
@@ -54,6 +75,7 @@ const handleAuthorClick = (authorKey) => {
         <BookGrid books={books} handleAuthorClick={handleAuthorClick} />
     </div>
   );
+  
 }
 
 export default App;
