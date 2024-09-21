@@ -5,6 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
 .search-bar {
@@ -28,4 +29,32 @@
 
 .search-button:hover {
   background-color: #0056b3;
+}
+
+
+/* Book Grid */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+}
+
+.book-card {
+  text-align: center;
+}
+
+.book-cover {
+  width: 100%;
+  height: auto;
+}
+
+.book-title {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.book-author {
+  font-size: 14px;
+  color: grey;
+  cursor: pointer;
 }

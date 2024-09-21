@@ -1,7 +1,9 @@
-import SearchBar from './components/SearchBar';
-import './App.css';
 import { useState } from 'react';
+import SearchBar from './components/SearchBar';
+import BookGrid from './components/BookGrid';
+import './App.css';
 import axios from 'axios';
+
 
 
 function App() {
@@ -10,6 +12,9 @@ function App() {
   const [query, setQuery] = useState('');
   const [totalPages, setTotalPages] = useState(10);
   const [books, setBooks] = useState([]);
+  const [showModal, setShowModal] = useState(false);  //for showing the modal
+  const [authorDetails, setAuthorDetails] = useState({});
+  const [page, setPage] = useState(1);
 
   const handleSearch = async () => {
   //if query is empty
@@ -37,9 +42,16 @@ function App() {
   }
 };
 
+const handleAuthorClick = (authorKey) => {
+  // Placeholder for modal logic
+  setShowModal(true);
+};
+
+
   return (
     <div className="app">
         <SearchBar query={query} setQuery={setQuery} handleSearch={handleSearch} />
+        <BookGrid books={books} handleAuthorClick={handleAuthorClick} />
     </div>
   );
 }
