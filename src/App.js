@@ -1,86 +1,115 @@
-import { useState } from 'react';
-import SearchBar from './components/SearchBar';
-import BookGrid from './components/BookGrid';
-import Pagination from './components/Pagination';
-import './App.css';
-import axios from 'axios';
-
-
+import { useEffect, useState } from "react";
+import SearchBar from "./components/SearchBar";
+import BookGrid from "./components/BookGrid";
+import Pagination from "./components/Pagination";
+import "./App.css";
+import axios from "axios";
+import Modal from "./components/Modal";
 
 function App() {
-
   //query entered by user here
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [totalPages, setTotalPages] = useState(10);
   const [books, setBooks] = useState([]);
-  const [showModal, setShowModal] = useState(false);  //for showing the modal
+  const [showModal, setShowModal] = useState(false); //for showing the modal
   const [authorDetails, setAuthorDetails] = useState({});
   const [page, setPage] = useState(1);
 
   const handleSearch = async () => {
-  //if query is empty
-  if (!query.trim()) return; 
+    //if query is empty
+    if (!query.trim()) return;
 
-  try {
-    // made API call to OpenLibrary's search 
-    const response = await axios.get(`https://openlibrary.org/search.json?q=${query}&page=${totalPages}`);
-    // 
-    
-    console.log(response.data);
-    // extract the books data
-    const booksData = response.data.docs.map(book => ({
-      key: book.key,
-      title: book.title,
-      author_name: book.author_name?.[0], // Handle cases where author name is not available
-      cover_id: book.cover_i, // Use cover_i for the cover image
-    }));
+    const limit = 20;
+    const offset = (page - 1) * limit; // Calculated the offset based on the current page
 
-    setBooks(booksData);
-    setTotalPages(Math.ceil(response.data.numFound / 20)); // calculate total pages (20 results per page)
+    try {
+      const response = await axios.get(
+        `https://openlibrary.org/search.json?q=${query}&limit=${limit}&offset=${offset}`
+      );
 
-  } catch (error) {
-    console.error("Error fetching books:", error);
-  }
-};
+      console.log(response.data);
+      const booksData = response.data.docs.map((book) => ({
+        key: book.key,
+        title: book.title,
+        author_name: book.author_name?.[0],
+        cover_id: book.cover_i,
+      }));
 
+      setBooks(booksData);
+      setTotalPages(Math.ceil(response.data.numFound / limit)); // Calculate total pages
+    } catch (error) {
+      console.error("Error fetching books:", error);
+    }
+  };
 
-const closeModal = () => setShowModal(false);
-
-const handleNext = () => setPage(page + 1);
-const handlePrev = () => setPage(page - 1);
+  const closeModal = () => setShowModal(false);
 
 
+  //to trigger the handleSearch 
 
 
-const handleAuthorClick = async (authorKey) => {
-  try {
-    // Make API call for author details 
-    const response = await axios.get(`https://openlibrary.org/authors/${authorKey}.json`);
-    
-    // exatract the data
-    const authorData = {
-      name: response.data.name,
-      bio: response.data.bio?.value || 'No bio available', // Handle cases where bio is missing
-      photo_url: `https://covers.openlibrary.org/b/id/${response.data.photos?.[0]}-M.jpg` || '', // Use photo ID if available
-    };
+  const handleNext = () => {
+    if (page < totalPages) {
+      setPage(page + 1); // Increment page
+    }
+  };
 
-    setAuthorDetails(authorData);
-    setShowModal(true); // Show the modal
+  const handlePrev = () => {
+    //to avoid -ve indexation here
+    if (page > 1) {
+      setPage(page - 1); // Decrement page
+    }
+  };
 
-  } catch (error) {
-    console.error("Error fetching author details:", error);
-};
-}
+
+  useEffect(() => {
+    if (query) {
+      handleSearch();
+    }
+  }, [page, query]);
+
+  const handleAuthorClick = async (authorKey) => {
+    try {
+      // Make API call for author details
+      const response = await axios.get(
+        `https://openlibrary.org/authors/${authorKey}.json`
+      );
+
+      // exatract the data
+      const authorData = {
+        name: response.data.name,
+        bio: response.data.bio?.value || "No bio available", // Handle cases where bio is missing
+        photo_url:
+          `https://covers.openlibrary.org/b/id/${response.data.photos?.[0]}-M.jpg` ||
+          "", // we will use photo ID if available
+      };
+
+      setAuthorDetails(authorData);
+      setShowModal(true); // Show the modal
+    } catch (error) {
+      console.error("Error fetching author details:", error);
+    }
+  };
+
 
 
   return (
     <div className="app">
-        <SearchBar query={query} setQuery={setQuery} handleSearch={handleSearch} />
-        <BookGrid books={books} handleAuthorClick={handleAuthorClick} />
-        <Pagination page={page} totalPages={totalPages} handleNext={handleNext} handlePrev={handlePrev} />
+      <SearchBar
+        query={query}
+        setQuery={setQuery}
+        handleSearch={handleSearch}
+      />
+      <BookGrid books={books} handleAuthorClick={handleAuthorClick} />
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        handleNext={handleNext}
+        handlePrev={handlePrev}
+      />
+       <Modal showModal={showModal} authorDetails={authorDetails} closeModal={closeModal} />
     </div>
   );
-  
 }
 
 export default App;

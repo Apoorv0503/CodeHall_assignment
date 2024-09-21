@@ -5,9 +5,15 @@ const BookGrid = ({ books }) => {
   // dummy image URL
   const fallbackImage = 'https://via.placeholder.com/150?text=No+Cover';
 
+
+    // Check if books data is present
+  if (!books || books.length === 0) {
+    return <div>Loading...</div>; // Loading state
+  }
+
+
   return (
     <div className="book-grid">
-        
       {books.map((book) => (
         <div key={book.key} className="book-card">
           <img
