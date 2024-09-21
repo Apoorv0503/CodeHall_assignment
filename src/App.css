@@ -67,6 +67,27 @@
   cursor: pointer;
 }
 
+
+
+/* Pagination */
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination-button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.pagination-button:disabled {
+  background-color: grey;
+}
+
 /* grid view for the tab */
 /* @media (max-width: 1024px) {
   .grid-container {

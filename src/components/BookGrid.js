@@ -1,12 +1,13 @@
 import React from 'react';
 
 const BookGrid = ({ books }) => {
-    
+
   // dummy image URL
   const fallbackImage = 'https://via.placeholder.com/150?text=No+Cover';
 
   return (
     <div className="book-grid">
+        
       {books.map((book) => (
         <div key={book.key} className="book-card">
           <img

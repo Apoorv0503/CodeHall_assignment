@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import SearchBar from './components/SearchBar';
 import BookGrid from './components/BookGrid';
+import Pagination from './components/Pagination';
 import './App.css';
 import axios from 'axios';
 
@@ -22,8 +23,8 @@ function App() {
 
   try {
     // made API call to OpenLibrary's search 
-    const response = await axios.get(`https://openlibrary.org/search.json?q=${query}`);
-    // &page=${totalPages}
+    const response = await axios.get(`https://openlibrary.org/search.json?q=${query}&page=${totalPages}`);
+    // 
     
     console.log(response.data);
     // extract the books data
@@ -42,10 +43,13 @@ function App() {
   }
 };
 
-// const handleAuthorClick = (authorKey) => {
-//   // Placeholder for modal logic
-//   setShowModal(true);
-// };
+
+const closeModal = () => setShowModal(false);
+
+const handleNext = () => setPage(page + 1);
+const handlePrev = () => setPage(page - 1);
+
+
 
 
 const handleAuthorClick = async (authorKey) => {
@@ -73,6 +77,7 @@ const handleAuthorClick = async (authorKey) => {
     <div className="app">
         <SearchBar query={query} setQuery={setQuery} handleSearch={handleSearch} />
         <BookGrid books={books} handleAuthorClick={handleAuthorClick} />
+        <Pagination page={page} totalPages={totalPages} handleNext={handleNext} handlePrev={handlePrev} />
     </div>
   );
   
