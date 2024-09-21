@@ -10,6 +10,7 @@ const SearchBar = ({ query, setQuery, handleSearch }) => {
         placeholder="Search for books..." 
         className="search-input"
       />
+      
       <button onClick={handleSearch} className="search-button">
         Go
       </button>

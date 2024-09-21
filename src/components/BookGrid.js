@@ -1,16 +1,12 @@
 import React from 'react';
 
-const BookGrid = ({ books }) => {
-
-  // dummy image URL
+const BookGrid = ({ books, handleAuthorClick }) => {
   const fallbackImage = 'https://via.placeholder.com/150?text=No+Cover';
 
-
-    // Check if books data is present
+  // Check if books data is present
   if (!books || books.length === 0) {
     return <div>Loading...</div>; // Loading state
   }
-
 
   return (
     <div className="book-grid">
@@ -22,7 +18,9 @@ const BookGrid = ({ books }) => {
             className="book-cover"
           />
           <h3 className="book-title">{book.title}</h3>
-          <p className="book-author">{book.author_name?.[0]}</p>
+          <p className="book-author" onClick={() => handleAuthorClick(book.author_key)}>
+            {book.author_name?.[0]}
+          </p>
         </div>
       ))}
     </div>

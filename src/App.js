@@ -13,15 +13,21 @@ function App() {
   const [books, setBooks] = useState([]);
   const [showModal, setShowModal] = useState(false); //for showing the modal
   const [authorDetails, setAuthorDetails] = useState({});
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [page, setPage] = useState(1);
 
   const handleSearch = async () => {
     //if query is empty
-    if (!query.trim()) return;
+    if (!query.trim()) {
+      setBooks([]);
+      setTotalPages(0);
+      return;
+    }
 
     const limit = 20;
     const offset = (page - 1) * limit; // Calculated the offset based on the current page
 
+    // if (!debouncedQuery) return;
     try {
       const response = await axios.get(
         `https://openlibrary.org/search.json?q=${query}&limit=${limit}&offset=${offset}`
@@ -48,27 +54,46 @@ function App() {
   //to trigger the handleSearch 
 
 
+  // const handleNext = () => {
+  //   if (page < totalPages) {
+  //     setPage(page + 1); // Increment page
+  //   }
+  // };
+
+  // const handlePrev = () => {
+  //   //to avoid -ve indexation here
+  //   if (page > 1) {
+  //     setPage(page - 1); // Decrement page
+  //   }
+  // };
+
   const handleNext = () => {
     if (page < totalPages) {
-      setPage(page + 1); // Increment page
+      const newPage = page + 1;
+      setPage(newPage);
+      handleSearch(newPage); // Trigger search with new page
     }
   };
 
   const handlePrev = () => {
-    //to avoid -ve indexation here
     if (page > 1) {
-      setPage(page - 1); // Decrement page
+      const newPage = page - 1;
+      setPage(newPage);
+      handleSearch(newPage); // Trigger search with new page
     }
   };
 
+  
 
-  useEffect(() => {
-    if (query) {
-      handleSearch();
-    }
-  }, [page, query]);
+
+  // useEffect(() => {
+  //   if (query) {
+  //     handleSearch();
+  //   }
+  // }, [page, query]);
 
   const handleAuthorClick = async (authorKey) => {
+    console.log("handleAuthorClick: ",authorKey);
     try {
       // Make API call for author details
       const response = await axios.get(
@@ -98,16 +123,20 @@ function App() {
       <SearchBar
         query={query}
         setQuery={setQuery}
-        handleSearch={handleSearch}
+        handleSearch={() => handleSearch(page)} 
       />
-      <BookGrid books={books} handleAuthorClick={handleAuthorClick} />
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        handleNext={handleNext}
-        handlePrev={handlePrev}
-      />
-       <Modal showModal={showModal} authorDetails={authorDetails} closeModal={closeModal} />
+       {query && books.length > 0 && (
+        <>
+          <BookGrid books={books} handleAuthorClick={handleAuthorClick} />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            handleNext={handleNext}
+            handlePrev={handlePrev}
+          />
+        </>
+      )}
+      {showModal && <Modal authorDetails={authorDetails} closeModal={closeModal} />}
     </div>
   );
 }
